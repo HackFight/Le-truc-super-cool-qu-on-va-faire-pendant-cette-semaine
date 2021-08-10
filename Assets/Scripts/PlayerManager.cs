@@ -8,12 +8,13 @@ public class PlayerManager : MonoBehaviour
 
 	const int maxPlayers = 4;
 
-	List<Vector2> playerPositions = new List<Vector2>() {
+	List<Vector2> playerPositions = new List<Vector2>() 
+	{
 			new Vector2( -1, 1),
 			new Vector2( 1, 1),
 			new Vector2( -1, -1),
 			new Vector2( 1, -1),
-		};
+	};
 
 	List<PlayerMovement> players = new List<PlayerMovement>(maxPlayers);
 
@@ -88,6 +89,7 @@ public class PlayerManager : MonoBehaviour
 			var gameObject = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
 			var player = gameObject.GetComponent<PlayerMovement>();
 			player.Device = inputDevice;
+			player.playerID = players.Count;
 			players.Add(player);
 
 			return player;

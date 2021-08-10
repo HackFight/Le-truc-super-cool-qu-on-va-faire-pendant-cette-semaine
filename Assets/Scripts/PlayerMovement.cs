@@ -6,25 +6,47 @@ public class PlayerMovement : MonoBehaviour
 {
 
 	public float moveSpeed = 5f;
-
 	public InputDevice Device { get; set; }
-
+	public GameObject nose;
 	private Rigidbody2D rg;
-
 	Vector2 movement;
+	public Egg eggScript;
+	private bool haveEggInHands;
+	public Transform attach;
+	private bool isLeftTriggerPressed;
+	public int playerID;
+	public float speedMalus;
 
 	private void Start()
 	{
+		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody2D>();
+
+		if(playerID == 0)
+		{
+			nose.GetComponent<SpriteRenderer>().color = Color.blue;
+		}
+		else if (playerID == 1)
+		{
+			nose.GetComponent<SpriteRenderer>().color = Color.red;
+		}
+		else if (playerID == 2)
+		{
+			nose.GetComponent<SpriteRenderer>().color = Color.yellow;
+		}
+		else if (playerID == 3)
+		{
+			nose.GetComponent<SpriteRenderer>().color = Color.green;
+		}
 	}
 
 	void Update () 
 	{
-
-		GetComponent<SpriteRenderer>().material.color = GetColorFromInput();
 		
 		movement.x = Device.Direction.X;
 		movement.y = Device.Direction.Y;
+
+		MoveEgg();
 
 		if (Device == null)
 		{
@@ -34,32 +56,71 @@ public class PlayerMovement : MonoBehaviour
 		{
 			gameObject.SetActive(true);
 
-			rg.MovePosition(rg.position + movement * moveSpeed * Time.fixedDeltaTime);
+			if(haveEggInHands == false)
+			{
+				rg.MovePosition(rg.position + movement * moveSpeed * Time.deltaTime);
+			}
+			else
+			{
+				rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus) * Time.deltaTime);
+			}
+
+			
+		}
+
+		if (Device.LeftTrigger.WasPressed && haveEggInHands == true)
+		{
+			Drop();
+			isLeftTriggerPressed = false;
+		}
+		else
+		{
+			if (Device.LeftTrigger.WasPressed)
+			{
+				isLeftTriggerPressed = true;
+			}
+			else if (Device.LeftTrigger.WasReleased)
+			{
+				isLeftTriggerPressed = false;
+			}
 		}
 	}
 
-	Color GetColorFromInput()
+	private void Grab()
 	{
-		if (Device.Action1)
+		if (eggScript.isGrabed == false)
 		{
-			return Color.green;
-		}
+			eggScript.isGrabed = true;
+			haveEggInHands = true;
 
-		if (Device.Action2)
+			Debug.Log("Grabed Egg");
+		}
+	}
+
+	private void Drop()
+	{
+		if (eggScript.isGrabed == true)
 		{
-			return Color.red;
-		}
+			eggScript.isGrabed = false;
+			haveEggInHands = false;
 
-		if (Device.Action3)
+			Debug.Log("Dropped Egg");
+		}
+	}
+
+	private void MoveEgg()
+	{
+		if (haveEggInHands == true)
 		{
-			return Color.blue;
+			eggScript.transform.position = attach.position;
 		}
+	}
 
-		if (Device.Action4)
-		{
-			return Color.yellow;
+	private void OnTriggerStay2D(Collider2D collision)
+	{
+		if (collision.CompareTag("Egg") && isLeftTriggerPressed && eggScript.isGrabed == false)
+		{	
+			Grab();
 		}
-
-		return Color.white;
 	}
 }
