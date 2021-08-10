@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
 	public Transform front;
 
 	public float moveSpeed = 20.0f;
-	public float speedMalus = 5.0f;
+	public float speedMalus = 0;
 
 	public float dashSpeed = 60.0f;
 	public float dashTime = 1.0f;
@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool isLeftTriggerPressed;
 	private bool canDash = true;
 	private bool isDashing = false;
+	private bool canTurn = true;
 
 	private void Start()
 	{
@@ -53,41 +54,21 @@ public class PlayerMovement : MonoBehaviour
 
 	void Update()
 	{
-
-		movement.x = Device.Direction.X;
-		movement.y = Device.Direction.Y;
+		if (isDashing == false)
+		{
+			movement.x = Device.Direction.X;
+			movement.y = Device.Direction.Y;
+		}
 
 		MoveEgg();
 
-		if (Device == null)
-		{
-			gameObject.SetActive(false);
-		}
-		else
-		{
-			gameObject.SetActive(true);
-
-			if (haveEggInHands == false && isDashing == false)
-			{
-				rg.MovePosition(rg.position + movement * moveSpeed * Time.deltaTime);
-			}
-			else if(haveEggInHands == true && isDashing == false)
-			{
-				rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus) * Time.deltaTime);
-			}
-			else if(haveEggInHands == false && isDashing == true)
-			{
-				rg.MovePosition(rg.position + movement *  dashSpeed * Time.deltaTime);
-			}
-
-
-		}
 
 		if (Device.RightTrigger.WasPressed)
 		{
 			if (canDash && !haveEggInHands)
 			{
 				canDash = false;
+				canTurn = false;
 				Dash();
 				Invoke("SetDashToTrue", dashCoolDown);
 				Invoke("SetIsDashingToFalse", dashTime);
@@ -110,13 +91,44 @@ public class PlayerMovement : MonoBehaviour
 				isLeftTriggerPressed = false;
 			}
 		}
-
-		front.position = transform.position + Device.Direction;
+		
+		if(((Vector2)Device.Direction).magnitude > 0.5f)
+		{
+			front.position = transform.position + Device.Direction;
+		}
 
 		Vector2 lookDirection = front.position - transform.position;
 		float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
 
-		transform.rotation = Quaternion.Euler(0, 0, lookAngle);
+		if (canTurn)
+		{
+			transform.rotation = Quaternion.Euler(0, 0, lookAngle);
+		}
+	}
+
+	private void FixedUpdate()
+	{
+		if (Device == null)
+		{
+			gameObject.SetActive(false);
+		}
+		else
+		{
+			gameObject.SetActive(true);
+
+			if (haveEggInHands == false && isDashing == false)
+			{
+				rg.MovePosition(rg.position + movement * moveSpeed);
+			}
+			else if (haveEggInHands == true && isDashing == false)
+			{
+				rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus));
+			}
+			else if (haveEggInHands == false && isDashing == true)
+			{
+				rg.MovePosition(rg.position + movement * dashSpeed);
+			} 
+		}
 	}
 
 	private void Grab()
@@ -128,8 +140,9 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	private void Drop()
+	public void Drop()
 	{
+
 		if (eggScript.isGrabed == true)
 		{
 			eggScript.isGrabed = false;
@@ -156,6 +169,14 @@ public class PlayerMovement : MonoBehaviour
 		{	
 			Grab();
 		}
+
+		if (collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().haveEggInHands && isDashing)
+		{
+			collision.GetComponent<PlayerMovement>().canDash = false;
+			collision.GetComponent<PlayerMovement>().Invoke("SetDashToTrue", dashCoolDown);
+			collision.GetComponent<PlayerMovement>().Drop();
+			Grab();
+		}
 	}
 
 	void SetDashToTrue()
@@ -166,5 +187,6 @@ public class PlayerMovement : MonoBehaviour
 	void SetIsDashingToFalse()
 	{
 		isDashing = false;
+		canTurn = true;
 	}
 }
