@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 	public InputDevice Device { get; set; }
 	public GameObject nose;
 	public Transform attach;
+	public Transform front;
 
 	public float moveSpeed = 20.0f;
 	public float speedMalus = 5.0f;
@@ -109,6 +110,13 @@ public class PlayerMovement : MonoBehaviour
 				isLeftTriggerPressed = false;
 			}
 		}
+
+		front.position = transform.position + Device.Direction;
+
+		Vector2 lookDirection = front.position - transform.position;
+		float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
+
+		transform.rotation = Quaternion.Euler(0, 0, lookAngle);
 	}
 
 	private void Grab()
@@ -140,8 +148,6 @@ public class PlayerMovement : MonoBehaviour
 	private void Dash()
 	{
 		isDashing = true;
-		Debug.Log("Dash!");
-
 	}
 
 	private void OnTriggerStay2D(Collider2D collision)
