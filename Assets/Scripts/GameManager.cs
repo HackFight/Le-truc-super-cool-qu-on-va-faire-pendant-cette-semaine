@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public float chrono;
     private Egg eggScript;
+    public float timeToOpenEgg = 30.0f;
+
     void Start()
     {
 
@@ -15,9 +17,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
-        Debug.Log(chrono);
-        
+        if (chrono >= timeToOpenEgg)
+        {
+            Debug.Log("YAY!");
+        }  
     }
 
     public void IncrementChrono()

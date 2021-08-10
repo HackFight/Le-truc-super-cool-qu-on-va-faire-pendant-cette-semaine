@@ -249,6 +249,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecfccc240e2fcf4782922361a1bb695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chrono: 0
+  timeToOpenEgg: 30
 --- !u!1 &1677367458
 GameObject:
   m_ObjectHideFlags: 0
