@@ -4,23 +4,33 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour 
 {
+	public int playerID;
 
-	public float moveSpeed = 5f;
 	public InputDevice Device { get; set; }
 	public GameObject nose;
-	private Rigidbody2D rg;
-	Vector2 movement;
-	public Egg eggScript;
-	private bool haveEggInHands;
 	public Transform attach;
+
+	public float moveSpeed = 20.0f;
+	public float speedMalus = 5.0f;
+
+	public float dashSpeed = 60.0f;
+	public float dashTime = 1.0f;
+	public float dashCoolDown = 5.0f;
+
+	private Rigidbody2D rg;
+	private Egg eggScript;
+	Vector2 movement;
+	private bool haveEggInHands;
 	private bool isLeftTriggerPressed;
-	public int playerID;
-	public float speedMalus;
+	private bool canDash = true;
+	private bool isDashing = false;
 
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody2D>();
+
+		canDash = true;
 
 		if(playerID == 0)
 		{
@@ -40,9 +50,9 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	void Update () 
+	void Update()
 	{
-		
+
 		movement.x = Device.Direction.X;
 		movement.y = Device.Direction.Y;
 
@@ -56,16 +66,31 @@ public class PlayerMovement : MonoBehaviour
 		{
 			gameObject.SetActive(true);
 
-			if(haveEggInHands == false)
+			if (haveEggInHands == false && isDashing == false)
 			{
 				rg.MovePosition(rg.position + movement * moveSpeed * Time.deltaTime);
 			}
-			else
+			else if(haveEggInHands == true && isDashing == false)
 			{
 				rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus) * Time.deltaTime);
 			}
+			else if(haveEggInHands == false && isDashing == true)
+			{
+				rg.MovePosition(rg.position + movement *  dashSpeed * Time.deltaTime);
+			}
 
-			
+
+		}
+
+		if (Device.RightTrigger.WasPressed)
+		{
+			if (canDash && !haveEggInHands)
+			{
+				canDash = false;
+				Dash();
+				Invoke("SetDashToTrue", dashCoolDown);
+				Invoke("SetIsDashingToFalse", dashTime);
+			}
 		}
 
 		if (Device.LeftTrigger.WasPressed && haveEggInHands == true)
@@ -92,8 +117,6 @@ public class PlayerMovement : MonoBehaviour
 		{
 			eggScript.isGrabed = true;
 			haveEggInHands = true;
-
-			Debug.Log("Grabed Egg");
 		}
 	}
 
@@ -103,8 +126,6 @@ public class PlayerMovement : MonoBehaviour
 		{
 			eggScript.isGrabed = false;
 			haveEggInHands = false;
-
-			Debug.Log("Dropped Egg");
 		}
 	}
 
@@ -116,11 +137,28 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
+	private void Dash()
+	{
+		isDashing = true;
+		Debug.Log("Dash!");
+
+	}
+
 	private void OnTriggerStay2D(Collider2D collision)
 	{
 		if (collision.CompareTag("Egg") && isLeftTriggerPressed && eggScript.isGrabed == false)
 		{	
 			Grab();
 		}
+	}
+
+	void SetDashToTrue()
+	{
+		canDash = true;
+	}
+
+	void SetIsDashingToFalse()
+	{
+		isDashing = false;
 	}
 }
