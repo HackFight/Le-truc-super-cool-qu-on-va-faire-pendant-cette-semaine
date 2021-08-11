@@ -1,6 +1,8 @@
 ﻿using InControl;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour 
 {
@@ -10,13 +12,21 @@ public class PlayerMovement : MonoBehaviour
 	public GameObject nose;
 	public Transform attach;
 	public Transform front;
+	public GameObject view;
+	public GameObject shockZone;
+	public TextMeshProUGUI lifesText;
 
-	public float moveSpeed = 20.0f;
+	public float moveSpeed = 0.1f;
 	public float speedMalus = 0;
 
-	public float dashSpeed = 60.0f;
-	public float dashTime = 1.0f;
+	public float dashSpeed = 1.0f;
+	public float dashTime = 0.1f;
 	public float dashCoolDown = 5.0f;
+
+	public int playerLifes;
+	public int playerMaxLifes = 3;
+	public int monsterLifes;
+	public int monsterMaxLifes = 5;
 
 	private Rigidbody2D rg;
 	private Egg eggScript;
@@ -27,7 +37,9 @@ public class PlayerMovement : MonoBehaviour
 	private bool canDash = true;
 	private bool isDashing = false;
 	private bool canTurn = true;
-	private bool isMonster;
+	private bool isMonster = false;
+	private bool shock = false;
+	private bool isDead = false;
 
 	private void Start()
 	{
@@ -36,6 +48,11 @@ public class PlayerMovement : MonoBehaviour
 		gameManager = FindObjectOfType<GameManager>();
 
 		canDash = true;
+
+		playerLifes = playerMaxLifes;
+		monsterLifes = monsterMaxLifes;
+
+		shockZone.SetActive(false);
 
 		if(playerID == 0)
 		{
@@ -57,86 +74,127 @@ public class PlayerMovement : MonoBehaviour
 
 	void Update()
 	{
-		if (isDashing == false)
+		if (!isDead)
 		{
-			movement.x = Device.Direction.X;
-			movement.y = Device.Direction.Y;
-		}
-
-		MoveEgg();
-
-
-		if (Device.RightTrigger.WasPressed)
-		{
-			if (canDash && !haveEggInHands)
+			if (playerLifes <= 0)
 			{
-				canDash = false;
-				canTurn = false;
-				Dash();
-				Invoke("SetDashToTrue", dashCoolDown);
-				Invoke("SetIsDashingToFalse", dashTime);
+				Die();
 			}
-		}
 
-		if (Device.LeftTrigger.WasPressed && haveEggInHands == true)
-		{
-			Drop();
-			isLeftTriggerPressed = false;
-		}
-		else
-		{
+			if (isDashing == false)
+			{
+				movement.x = Device.Direction.X;
+				movement.y = Device.Direction.Y;
+			}
+
+			MoveEgg();
+
+			if (shock)
+			{
+				shock = false;
+				shockZone.SetActive(false);
+			}
+
+			if (Device.RightTrigger.WasPressed)
+			{
+				if (canDash && !haveEggInHands)
+				{
+					canDash = false;
+					canTurn = false;
+					Dash();
+					Invoke("SetDashToTrue", dashCoolDown);
+					Invoke("SetIsDashingToFalse", dashTime);
+				}
+			}
+
+
 			if (Device.LeftTrigger.WasPressed)
 			{
-				isLeftTriggerPressed = true;
+
+				if (isMonster)
+				{
+
+					Shock();
+
+				}
+				else
+				{
+					if (haveEggInHands == true)
+					{
+						Drop();
+						isLeftTriggerPressed = false;
+					}
+					else
+					{
+						if (Device.LeftTrigger.WasPressed)
+						{
+							isLeftTriggerPressed = true;
+						}
+						else if (Device.LeftTrigger.WasReleased)
+						{
+							isLeftTriggerPressed = false;
+						}
+					}
+				}
 			}
-			else if (Device.LeftTrigger.WasReleased)
+
+			if (((Vector2)Device.Direction).magnitude > 0.5f)
 			{
-				isLeftTriggerPressed = false;
+				front.position = transform.position + Device.Direction;
 			}
-		}
-		
-		if(((Vector2)Device.Direction).magnitude > 0.5f)
-		{
-			front.position = transform.position + Device.Direction;
-		}
 
-		Vector2 lookDirection = front.position - transform.position;
-		float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
+			Vector2 lookDirection = front.position - transform.position;
+			float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
 
-		if (canTurn)
-		{
-			transform.rotation = Quaternion.Euler(0, 0, lookAngle);
+			if (canTurn)
+			{
+				transform.rotation = Quaternion.Euler(0, 0, lookAngle);
+			}
+
+			if (isMonster == false && haveEggInHands && gameManager.chrono >= gameManager.timeToOpenEgg)
+			{
+				eggScript.gameObject.SetActive(false);
+				TurnIntoMonster();
+			}
+
+			lifesText.text = playerLifes.ToString();
 		}
 	}
 
 	private void FixedUpdate()
 	{
-		if (Device == null)
+		if (!isDead)
 		{
-			gameObject.SetActive(false);
-		}
-		else
-		{
-			gameObject.SetActive(true);
+			if (isMonster == false)
+			{
+				if (Device == null)
+				{
+					gameObject.SetActive(false);
+				}
+				else
+				{
+					gameObject.SetActive(true);
 
-			if (haveEggInHands == false && isDashing == false)
-			{
-				rg.MovePosition(rg.position + movement * moveSpeed);
+					if (haveEggInHands == false && isDashing == false)
+					{
+						rg.MovePosition(rg.position + movement * moveSpeed);
+					}
+					else if (haveEggInHands == true && isDashing == false)
+					{
+						rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus));
+					}
+					else if (haveEggInHands == false && isDashing == true)
+					{
+						rg.MovePosition(rg.position + (Vector2)(front.position - transform.position) * dashSpeed);
+					}
+				}
 			}
-			else if (haveEggInHands == true && isDashing == false)
-			{
-				rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus));
-			}
-			else if (haveEggInHands == false && isDashing == true)
-			{
-				rg.MovePosition(rg.position + movement * dashSpeed);
-			} 
 		}
 	}
 
 	private void Grab()
 	{
-		if (eggScript.isGrabed == false)
+		if (eggScript.isGrabed == false && eggScript.canBeGrabed == true)
 		{
 			eggScript.isGrabed = true;
 			haveEggInHands = true;
@@ -166,19 +224,51 @@ public class PlayerMovement : MonoBehaviour
 		isDashing = true;
 	}
 
+	private void Shock()
+	{
+		Invoke("SetShockToTrue", 0.5f);
+		shockZone.SetActive(true);
+	}
+
+	private void SetShockToTrue()
+	{
+		shock = true;
+	}
+
+	private void Shoot()
+	{
+
+	}
+
+	private void TurnIntoMonster()
+	{
+		eggScript.canBeGrabed = false;
+		isMonster = true;
+		Drop();
+		view.GetComponent<SpriteRenderer>().color = Color.red;
+	}
+
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-		if (collision.CompareTag("Egg") && isLeftTriggerPressed && eggScript.isGrabed == false)
-		{	
-			Grab();
-		}
-
-		if (collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().haveEggInHands && isDashing)
+		if (!isDead)
 		{
-			collision.GetComponent<PlayerMovement>().canDash = false;
-			collision.GetComponent<PlayerMovement>().Invoke("SetDashToTrue", dashCoolDown);
-			collision.GetComponent<PlayerMovement>().Drop();
-			Grab();
+			if (collision.CompareTag("Egg") && isLeftTriggerPressed && eggScript.isGrabed == false)
+			{
+				Grab();
+			}
+
+			if (collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().haveEggInHands && isDashing)
+			{
+				collision.GetComponent<PlayerMovement>().canDash = false;
+				collision.GetComponent<PlayerMovement>().Invoke("SetDashToTrue", dashCoolDown);
+				collision.GetComponent<PlayerMovement>().Drop();
+				Grab();
+			}
+
+			if (collision.CompareTag("Bullet"))
+			{
+
+			}
 		}
 	}
 
@@ -193,8 +283,9 @@ public class PlayerMovement : MonoBehaviour
 		canTurn = true;
 	}
 
-	private void TurnIntoMonsters()
+	private void Die()
 	{
-		GetComponentInChildren<SpriteRenderer>().color = Color.red;
+		isDead = true;
+		view.GetComponent<SpriteRenderer>().color = Color.grey;
 	}
 }

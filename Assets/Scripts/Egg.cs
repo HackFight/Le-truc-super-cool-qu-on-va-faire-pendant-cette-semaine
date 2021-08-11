@@ -6,6 +6,7 @@ public class Egg : MonoBehaviour
 {
 
     public bool isGrabed = false;
+    public bool canBeGrabed = true;
 
     private GameManager gameManager;
 
