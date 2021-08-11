@@ -26,15 +26,16 @@ public class PlayerMovement : MonoBehaviour
 	public float dashCoolDown = 5.0f;
 
 	public float shockCooldown = 5.0f;
+	public float shootCooldown = 0.1f;
 
 	public float bulletSpeed = 2.0f;
 
 	public int playerLifes;
 	public int playerMaxLifes = 3;
-	public int monsterLifes;
 	public int monsterMaxLifes = 5;
 
 	public float immortalityTime = 1.0f;
+	public float monsterImmortalityTime = 0.1f;
 
 	private Rigidbody2D rg;
 	private Egg eggScript;
@@ -50,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool shock = false;
 	private bool isDead = false;
 	private bool canShock = true;
+	private bool canShoot = true;
 	private bool immortal = false;
 
 	private void Start()
@@ -63,7 +65,6 @@ public class PlayerMovement : MonoBehaviour
 		canDash = true;
 
 		playerLifes = playerMaxLifes;
-		monsterLifes = monsterMaxLifes;
 
 		shockZone.SetActive(false);
 
@@ -110,11 +111,7 @@ public class PlayerMovement : MonoBehaviour
 
 			if (Device.RightTrigger.WasPressed)
 			{
-				if (isMonster)
-				{
-					Shoot();
-				}
-				else
+				if (isMonster == false)
 				{
 					if (canDash && !haveEggInHands)
 					{
@@ -125,6 +122,11 @@ public class PlayerMovement : MonoBehaviour
 						Invoke("SetIsDashingToFalse", dashTime);
 					}
 				}
+			}
+
+			if (Device.RightTrigger.IsPressed && isMonster)
+			{
+				Shoot();
 			}
 
 
@@ -163,18 +165,18 @@ public class PlayerMovement : MonoBehaviour
 				front.position = transform.position + Device.Direction;
 			}
 
+			if (isMonster == false && haveEggInHands && gameManager.chrono >= gameManager.timeToOpenEgg)
+			{
+				eggScript.gameObject.SetActive(false);
+				TurnIntoMonster();
+			}
+
 			Vector2 lookDirection = front.position - transform.position;
 			float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
 
 			if (canTurn)
 			{
 				transform.rotation = Quaternion.Euler(0, 0, lookAngle);
-			}
-
-			if (isMonster == false && haveEggInHands && gameManager.chrono >= gameManager.timeToOpenEgg)
-			{
-				eggScript.gameObject.SetActive(false);
-				TurnIntoMonster();
 			}
 
 			lifesText.text = playerLifes.ToString();
@@ -187,6 +189,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			if (isMonster == false)
 			{
+
 				if (Device == null)
 				{
 					gameObject.SetActive(false);
@@ -262,15 +265,24 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Shoot()
 	{
-		GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-		temporaryBullet.GetComponent<Rigidbody2D>().AddForce((front.position - transform.position) * bulletSpeed);
+		if (canShoot)
+		{
+			canShoot = false;
+			GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+			temporaryBullet.GetComponent<Rigidbody2D>().AddForce((front.position - transform.position) * bulletSpeed);
+			Invoke("SetCanShootToTrue", shootCooldown);
+		}
 	}
 
 	private void TurnIntoMonster()
 	{
 		eggScript.canBeGrabed = false;
 		isMonster = true;
+
+		playerLifes = monsterMaxLifes;
+
 		Drop();
+
 		view.GetComponent<SpriteRenderer>().color = Color.red;
 	}
 
@@ -297,17 +309,27 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (!isDead)
 		{
-			if (collision.CompareTag("Bullet") && immortal == false && playerLifes > 0)
+			if (!isMonster)
 			{
-				immortal = true;
-				Invoke("SetImmortalToFalse", immortalityTime);
-				view.GetComponent<SpriteRenderer>().color = Color.green;
+				if (collision.CompareTag("Bullet") && immortal == false && playerLifes > 0)
+				{
+					immortal = true;
+					Invoke("SetImmortalToFalse", immortalityTime);
+					view.GetComponent<SpriteRenderer>().color = Color.green;
 
-				Debug.Log("Ouch!");
+					playerLifes--;
 
-				playerLifes--;
-
-				Destroy(collision.gameObject);
+					Destroy(collision.gameObject);
+				}
+			}
+			else
+			{
+				if(collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDashing && immortal == false)
+				{
+					immortal = true;
+					Invoke("SetImmortalToFalse", monsterImmortalityTime);
+					playerLifes--;
+				}
 			}
 		}
 	}
@@ -320,6 +342,11 @@ public class PlayerMovement : MonoBehaviour
 	private void SetCanShockToTrue()
 	{
 		canShock= true;
+	}
+
+	private void SetCanShootToTrue()
+	{
+		canShoot = true;
 	}
 
 	private void SetIsDashingToFalse()

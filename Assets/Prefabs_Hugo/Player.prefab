@@ -525,11 +525,14 @@ MonoBehaviour:
   dashSpeed: 1
   dashTime: 0.1
   dashCoolDown: 5
+  shockCooldown: 5
+  shootCooldown: 0.25
   bulletSpeed: 600
   playerLifes: 0
   playerMaxLifes: 3
-  monsterLifes: 0
   monsterMaxLifes: 5
+  immortalityTime: 1
+  monsterImmortalityTime: 0.5
 --- !u!50 &6308509118238139312
 Rigidbody2D:
   serializedVersion: 4
