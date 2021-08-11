@@ -20,17 +20,20 @@ public class PlayerMovement : MonoBehaviour
 
 	private Rigidbody2D rg;
 	private Egg eggScript;
-	Vector2 movement;
+	private GameManager gameManager;
+	private Vector2 movement;
 	private bool haveEggInHands;
 	private bool isLeftTriggerPressed;
 	private bool canDash = true;
 	private bool isDashing = false;
 	private bool canTurn = true;
+	private bool isMonster;
 
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody2D>();
+		gameManager = FindObjectOfType<GameManager>();
 
 		canDash = true;
 
@@ -179,14 +182,19 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	void SetDashToTrue()
+	private void SetDashToTrue()
 	{
 		canDash = true;
 	}
 
-	void SetIsDashingToFalse()
+	private void SetIsDashingToFalse()
 	{
 		isDashing = false;
 		canTurn = true;
+	}
+
+	private void TurnIntoMonsters()
+	{
+		GetComponentInChildren<SpriteRenderer>().color = Color.red;
 	}
 }
