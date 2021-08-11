@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Egg
   - Bullet
+  - Wall
   layers:
   - Default
   - TransparentFX

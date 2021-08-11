@@ -11,10 +11,12 @@ public class PlayerMovement : MonoBehaviour
 	public InputDevice Device { get; set; }
 	public GameObject nose;
 	public Transform attach;
+	public Transform bulletSpawnPoint;
 	public Transform front;
 	public GameObject view;
 	public GameObject shockZone;
 	public TextMeshProUGUI lifesText;
+	public GameObject bullet;
 
 	public float moveSpeed = 0.1f;
 	public float speedMalus = 0;
@@ -22,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
 	public float dashSpeed = 1.0f;
 	public float dashTime = 0.1f;
 	public float dashCoolDown = 5.0f;
+
+	public float bulletSpeed = 2.0f;
 
 	public int playerLifes;
 	public int playerMaxLifes = 3;
@@ -32,14 +36,16 @@ public class PlayerMovement : MonoBehaviour
 	private Egg eggScript;
 	private GameManager gameManager;
 	private Vector2 movement;
-	private bool haveEggInHands;
-	private bool isLeftTriggerPressed;
+
+	private bool haveEggInHands = false;
+	private bool isLeftTriggerPressed = false;
 	private bool canDash = true;
 	private bool isDashing = false;
 	private bool canTurn = true;
 	private bool isMonster = false;
 	private bool shock = false;
 	private bool isDead = false;
+	private bool canShoot = true;
 
 	private void Start()
 	{
@@ -97,13 +103,20 @@ public class PlayerMovement : MonoBehaviour
 
 			if (Device.RightTrigger.WasPressed)
 			{
-				if (canDash && !haveEggInHands)
+				if (isMonster)
 				{
-					canDash = false;
-					canTurn = false;
-					Dash();
-					Invoke("SetDashToTrue", dashCoolDown);
-					Invoke("SetIsDashingToFalse", dashTime);
+					Shoot();
+				}
+				else
+				{
+					if (canDash && !haveEggInHands)
+					{
+						canDash = false;
+						canTurn = false;
+						Dash();
+						Invoke("SetDashToTrue", dashCoolDown);
+						Invoke("SetIsDashingToFalse", dashTime);
+					}
 				}
 			}
 
@@ -237,7 +250,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Shoot()
 	{
-
+		GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+		temporaryBullet.GetComponent<Rigidbody2D>().AddForce((front.position - transform.position) * bulletSpeed);
 	}
 
 	private void TurnIntoMonster()
@@ -264,11 +278,17 @@ public class PlayerMovement : MonoBehaviour
 				collision.GetComponent<PlayerMovement>().Drop();
 				Grab();
 			}
+		}
+	}
 
-			if (collision.CompareTag("Bullet"))
-			{
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		if (collision.CompareTag("Bullet"))
+		{
 
-			}
+			playerLifes--;
+			Destroy(collision.gameObject);
+
 		}
 	}
 

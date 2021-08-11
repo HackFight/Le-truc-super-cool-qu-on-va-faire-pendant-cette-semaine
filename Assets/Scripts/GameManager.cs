@@ -17,10 +17,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (chrono >= timeToOpenEgg)
-        {
-            Debug.Log("YAY!");
-        }  
+
+
+
     }
 
     public void IncrementChrono()
