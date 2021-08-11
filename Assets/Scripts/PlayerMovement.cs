@@ -25,12 +25,16 @@ public class PlayerMovement : MonoBehaviour
 	public float dashTime = 0.1f;
 	public float dashCoolDown = 5.0f;
 
+	public float shockCooldown = 5.0f;
+
 	public float bulletSpeed = 2.0f;
 
 	public int playerLifes;
 	public int playerMaxLifes = 3;
 	public int monsterLifes;
 	public int monsterMaxLifes = 5;
+
+	public float immortalityTime = 1.0f;
 
 	private Rigidbody2D rg;
 	private Egg eggScript;
@@ -45,13 +49,16 @@ public class PlayerMovement : MonoBehaviour
 	private bool isMonster = false;
 	private bool shock = false;
 	private bool isDead = false;
-	private bool canShoot = true;
+	private bool canShock = true;
+	private bool immortal = false;
 
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody2D>();
 		gameManager = FindObjectOfType<GameManager>();
+
+		view.GetComponent<SpriteRenderer>().color = Color.white;
 
 		canDash = true;
 
@@ -239,8 +246,13 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Shock()
 	{
-		Invoke("SetShockToTrue", 0.5f);
-		shockZone.SetActive(true);
+		if (canShock)
+		{
+			canShock = false;
+			Invoke("SetCanShockToTrue", shockCooldown);
+			Invoke("SetShockToTrue", 0.5f);
+			shockZone.SetActive(true);
+		}
 	}
 
 	private void SetShockToTrue()
@@ -283,12 +295,20 @@ public class PlayerMovement : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.CompareTag("Bullet"))
+		if (!isDead)
 		{
+			if (collision.CompareTag("Bullet") && immortal == false && playerLifes > 0)
+			{
+				immortal = true;
+				Invoke("SetImmortalToFalse", immortalityTime);
+				view.GetComponent<SpriteRenderer>().color = Color.green;
 
-			playerLifes--;
-			Destroy(collision.gameObject);
+				Debug.Log("Ouch!");
 
+				playerLifes--;
+
+				Destroy(collision.gameObject);
+			}
 		}
 	}
 
@@ -297,10 +317,21 @@ public class PlayerMovement : MonoBehaviour
 		canDash = true;
 	}
 
+	private void SetCanShockToTrue()
+	{
+		canShock= true;
+	}
+
 	private void SetIsDashingToFalse()
 	{
 		isDashing = false;
 		canTurn = true;
+	}
+
+	private void SetImmortalToFalse()
+	{
+		view.GetComponent<SpriteRenderer>().color = Color.white;
+		immortal = false;
 	}
 
 	private void Die()

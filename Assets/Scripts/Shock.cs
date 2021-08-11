@@ -4,19 +4,9 @@ using UnityEngine;
 
 public class Shock : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && collision.gameObject != transform.parent)
         {
 
             collision.GetComponent<PlayerMovement>().playerLifes--;

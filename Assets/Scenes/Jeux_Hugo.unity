@@ -388,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chrono: 0
-  timeToOpenEgg: 5
+  timeToOpenEgg: 30
 --- !u!1 &1677367458
 GameObject:
   m_ObjectHideFlags: 0
