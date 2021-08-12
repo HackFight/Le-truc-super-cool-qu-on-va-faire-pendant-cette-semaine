@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Menu_Awi.unity
+    guid: 0ecd734a02ff54742862a0a446ba1ef3
+  - enabled: 1
     path: Assets/Scenes/Jeux_Hugo.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}
