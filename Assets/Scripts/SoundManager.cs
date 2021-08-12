@@ -16,6 +16,7 @@ public class SoundManager : MonoBehaviour
     {
         eggScript = FindObjectOfType<Egg>();
         battle_intro.Play();
+        statePlay = 0;
     }
     void Update()
     {
