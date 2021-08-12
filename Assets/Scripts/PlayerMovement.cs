@@ -17,9 +17,14 @@ public class PlayerMovement : MonoBehaviour
 	public GameObject shockZone;
 	public TextMeshProUGUI lifesText;
 	public GameObject bullet;
+	public GameObject monsterFrontPrefab;
+	private GameObject monsterFront;
+	public GameObject turningStuff;
 
 	public float moveSpeed = 0.1f;
 	public float speedMalus = 0;
+	public float monsterTurnSpeed = 0.5f;
+	public float turnSpeed = 1000f;
 
 	public float dashSpeed = 1.0f;
 	public float dashTime = 0.1f;
@@ -37,10 +42,10 @@ public class PlayerMovement : MonoBehaviour
 	public float immortalityTime = 1.0f;
 	public float monsterImmortalityTime = 0.1f;
 
-	private Rigidbody2D rg;
+	private Rigidbody rg;
 	private Egg eggScript;
 	private GameManager gameManager;
-	private Vector2 movement;
+	private Vector3 movement;
 
 	private bool haveEggInHands = false;
 	private bool isLeftTriggerPressed = false;
@@ -57,10 +62,12 @@ public class PlayerMovement : MonoBehaviour
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
-		rg = GetComponent<Rigidbody2D>();
+		rg = GetComponent<Rigidbody>();
 		gameManager = FindObjectOfType<GameManager>();
 
-		view.GetComponent<SpriteRenderer>().color = Color.white;
+		view.GetComponent<MeshRenderer>().material.color = Color.white;
+
+		monsterFront = Instantiate(monsterFrontPrefab, front.position, front.rotation);
 
 		canDash = true;
 
@@ -94,11 +101,16 @@ public class PlayerMovement : MonoBehaviour
 			{
 				Die();
 			}
+			
+			if (((Vector3)Device.Direction).magnitude > 0.5f)
+			{
+				monsterFront.transform.position = front.transform.position;
+			}
 
 			if (isDashing == false)
 			{
 				movement.x = Device.Direction.X;
-				movement.y = Device.Direction.Y;
+				movement.z = Device.Direction.Y;
 			}
 
 			MoveEgg();
@@ -160,9 +172,16 @@ public class PlayerMovement : MonoBehaviour
 				}
 			}
 
-			if (((Vector2)Device.Direction).magnitude > 0.5f)
+			if (((Vector3)Device.Direction).magnitude > 0.5f)
 			{
-				front.position = transform.position + Device.Direction;
+				if (canTurn &&  !isMonster)
+				{
+					front.position = transform.position + movement;
+				}
+				else if(isMonster)
+				{
+					monsterFront.transform.position = transform.position + movement;
+				}
 			}
 
 			if (isMonster == false && haveEggInHands && gameManager.chrono >= gameManager.timeToOpenEgg)
@@ -171,13 +190,32 @@ public class PlayerMovement : MonoBehaviour
 				TurnIntoMonster();
 			}
 
-			Vector2 lookDirection = front.position - transform.position;
-			float lookAngle = Vector2.SignedAngle(Vector2.right, lookDirection);
 
-			if (canTurn)
+			if (isMonster == false)
 			{
-				transform.rotation = Quaternion.Euler(0, 0, lookAngle);
+				//Vector3 lookDirection = front.position - transform.position;
+				//float lookAngle = Vector3.SignedAngle(Vector3.right, lookDirection, new Vector3(0, 1, 0));
+
+				if (canTurn)
+				{
+					Vector3 dir = front.transform.position - transform.position;
+					var dirCross = Vector3.Cross(dir, Vector3.up);
+					Quaternion lookRotation = Quaternion.LookRotation(dirCross, Vector3.up);
+					Vector3 rotation = Quaternion.Lerp(turningStuff.transform.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
+					turningStuff.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+
+					//transform.rotation = Quaternion.Euler(0, lookAngle, 0);
+				}
 			}
+			else
+			{
+				Vector3 dir = monsterFront.transform.position - transform.position;
+				var dirCross = Vector3.Cross(dir, Vector3.up);
+				Quaternion lookRotation = Quaternion.LookRotation(dirCross, Vector3.up);
+				Vector3 rotation = Quaternion.Lerp(turningStuff.transform.rotation, lookRotation, Time.deltaTime * monsterTurnSpeed).eulerAngles;
+				turningStuff.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+			}
+
 
 			lifesText.text = playerLifes.ToString();
 		}
@@ -208,7 +246,7 @@ public class PlayerMovement : MonoBehaviour
 					}
 					else if (haveEggInHands == false && isDashing == true)
 					{
-						rg.MovePosition(rg.position + (Vector2)(front.position - transform.position) * dashSpeed);
+						rg.MovePosition(rg.position + (Vector3)(front.position - transform.position) * dashSpeed);
 					}
 				}
 			}
@@ -269,7 +307,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			canShoot = false;
 			GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-			temporaryBullet.GetComponent<Rigidbody2D>().AddForce((front.position - transform.position) * bulletSpeed);
+			temporaryBullet.GetComponent<Rigidbody>().AddForce((bulletSpawnPoint.position - transform.position) * bulletSpeed);
 			Invoke("SetCanShootToTrue", shootCooldown);
 		}
 	}
@@ -283,10 +321,10 @@ public class PlayerMovement : MonoBehaviour
 
 		Drop();
 
-		view.GetComponent<SpriteRenderer>().color = Color.red;
+		view.GetComponent<MeshRenderer>().material.color = Color.red;
 	}
 
-	private void OnTriggerStay2D(Collider2D collision)
+	private void OnTriggerStay(Collider collision)
 	{
 		if (!isDead)
 		{
@@ -305,7 +343,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	private void OnTriggerEnter(Collider collision)
 	{
 		if (!isDead)
 		{
@@ -315,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
 				{
 					immortal = true;
 					Invoke("SetImmortalToFalse", immortalityTime);
-					view.GetComponent<SpriteRenderer>().color = Color.green;
+					view.GetComponent<MeshRenderer>().material.color = Color.green;
 
 					playerLifes--;
 
@@ -327,6 +365,7 @@ public class PlayerMovement : MonoBehaviour
 				if(collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDashing && immortal == false)
 				{
 					immortal = true;
+					view.GetComponent<MeshRenderer>().material.color = Color.green;
 					Invoke("SetImmortalToFalse", monsterImmortalityTime);
 					playerLifes--;
 				}
@@ -357,13 +396,13 @@ public class PlayerMovement : MonoBehaviour
 
 	private void SetImmortalToFalse()
 	{
-		view.GetComponent<SpriteRenderer>().color = Color.white;
+		view.GetComponent<MeshRenderer>().material.color = Color.white;
 		immortal = false;
 	}
 
 	private void Die()
 	{
 		isDead = true;
-		view.GetComponent<SpriteRenderer>().color = Color.grey;
+		view.GetComponent<MeshRenderer>().material.color = Color.grey;
 	}
 }
