@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+
+    public GameObject tutoPanel;
+    private bool isTutoOpen;
+
     void Start()
     {
         
@@ -14,16 +18,31 @@ public class Menu : MonoBehaviour
 
     public void LoadGame()
     {
-        SceneManager.LoadScene(1);
+        if (!isTutoOpen)
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 
     public void LoadOptions()
     {
-        SceneManager.LoadScene(2);
+        if (!isTutoOpen)
+        {
+            SceneManager.LoadScene(2);
+        }
     }
 
     public void GoBack()
     {
-        SceneManager.LoadScene(0);
+        if (!isTutoOpen)
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
+    public void OpenTuto()
+    {
+        isTutoOpen = true;
+        tutoPanel.SetActive(true);
     }
 }
