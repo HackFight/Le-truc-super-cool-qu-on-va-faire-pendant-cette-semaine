@@ -10,9 +10,11 @@ public class SoundManager : MonoBehaviour
     public AudioSource battle_golem;
 
     public GameManager gameManager;
+    private Egg eggScript;
     int statePlay = 0;
     void Start()
     {
+        eggScript = FindObjectOfType<Egg>();
         battle_intro.Play();
     }
     void Update()
@@ -30,10 +32,10 @@ public class SoundManager : MonoBehaviour
             battle_golem.Play();
             statePlay ++;
         }
-        if (statePlay == 1)
+        if (statePlay == 1 && eggScript.isGrabed)
         {
-            battle_soft.volume = Mathf.Clamp(gameManager.chrono, 0f, 1f);
-            battle_hard.volume = 1 - Mathf.Clamp(gameManager.chrono, 0f, 1f);
+            battle_soft.volume = Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
+            battle_hard.volume = 1 - Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
         }
     }
 }
