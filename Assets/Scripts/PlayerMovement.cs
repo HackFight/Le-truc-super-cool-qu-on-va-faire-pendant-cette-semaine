@@ -45,25 +45,27 @@ public class PlayerMovement : MonoBehaviour
 	private Rigidbody rg;
 	private Egg eggScript;
 	private GameManager gameManager;
+	private SoundManager soundManager;
 	private Vector3 movement;
 
-	private bool haveEggInHands = false;
-	private bool isLeftTriggerPressed = false;
-	private bool canDash = true;
-	private bool isDashing = false;
-	private bool canTurn = true;
-	private bool isMonster = false;
-	private bool shock = false;
-	private bool isDead = false;
-	private bool canShock = true;
-	private bool canShoot = true;
-	private bool immortal = false;
+	public bool haveEggInHands = false;
+	public bool isLeftTriggerPressed = false;
+	public bool canDash = true;
+	public bool isDashing = false;
+	public bool canTurn = true;
+	public bool isMonster = false;
+	public bool shock = false;
+	public bool isDead = false;
+	public bool canShock = true;
+	public bool canShoot = true;
+	public bool immortal = false;
 
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody>();
 		gameManager = FindObjectOfType<GameManager>();
+		soundManager = FindObjectOfType<SoundManager>();
 
 		view.GetComponent<MeshRenderer>().material.color = Color.white;
 
@@ -244,6 +246,15 @@ public class PlayerMovement : MonoBehaviour
 					{
 						rg.MovePosition(rg.position + (Vector3)(front.position - transform.position) * dashSpeed);
 					}
+				}
+
+				if((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.walkcycle_run.isPlaying == false)
+                {
+					soundManager.walkcycle_run.Play();
+                }
+
+				if((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.walkcycle_run.isPlaying == true){
+					soundManager.walkcycle_run.Stop();
 				}
 			}
 		}

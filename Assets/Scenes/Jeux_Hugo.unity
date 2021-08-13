@@ -312,6 +312,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 140, y: 40, z: 0}
+--- !u!82 &469821622 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3572595651428717617, guid: 9baa685536e2a584f924ad97ffd45949, type: 3}
+  m_PrefabInstance: {fileID: 1648094801}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +438,10 @@ MonoBehaviour:
   battle_soft: {fileID: 1672685932}
   battle_hard: {fileID: 615430776}
   battle_golem: {fileID: 1424104737}
-  gameManager: {fileID: 1530424790}
+  walkcycle_run: {fileID: 874100989}
+  walkcycle_turn: {fileID: 469821622}
+  walkcycle_turn2: {fileID: 1540739613}
+  isMusicActive: 0
 --- !u!4 &768074050
 Transform:
   m_ObjectHideFlags: 0
@@ -448,6 +456,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &874100989 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3572595651297981314, guid: 9baa685536e2a584f924ad97ffd45949, type: 3}
+  m_PrefabInstance: {fileID: 1648094801}
+  m_PrefabAsset: {fileID: 0}
 --- !u!82 &1355917208 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: 3572595652478658783, guid: 9baa685536e2a584f924ad97ffd45949, type: 3}
@@ -503,6 +516,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chrono: 0
   timeToOpenEgg: 30
+--- !u!82 &1540739613 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3572595652201862364, guid: 9baa685536e2a584f924ad97ffd45949, type: 3}
+  m_PrefabInstance: {fileID: 1648094801}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1648094801
 PrefabInstance:
   m_ObjectHideFlags: 0
