@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuScore : MonoBehaviour
 {
@@ -10,6 +13,9 @@ public class MenuScore : MonoBehaviour
 
     [Header("Menu")] 
     [SerializeField] private GameObject _menuScore;
+    [SerializeField] private GameObject _buttonNextMatch;
+    [SerializeField] private string _menuSceneName;
+    [SerializeField] private GameObject _buttonMenu;
 
     private int _nbPlayer;
     private int _nbTrophy;
@@ -26,17 +32,53 @@ public class MenuScore : MonoBehaviour
         _nbPlayer = nbPlayer;
         _nbTrophy = nbTrophy;
 
+        bool isOver = false;
+
         for (int i = 0; i < _nbPlayer; i++)
         {
             var instance = Instantiate(_prefabPlayerScoreMenu);
             instance.transform.parent = _playerListParent.transform;
 
             instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i, scores[i]);
+
+            if (scores[i] == nbTrophy)
+            {
+                isOver = true;
+            }
+        }
+
+        //Set button
+        if (isOver)
+        {
+            _buttonMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(_buttonMenu);
+
+            _buttonNextMatch.SetActive(false);
+        }
+        else
+        {
+            _buttonMenu.SetActive(false);
+
+            _buttonNextMatch.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(_buttonNextMatch);
+
         }
     }
 
     public bool IsActive()
     {
         return _menuScore.activeSelf;
+    }
+
+    public void NextMatch()
+    {
+        _menuScore.SetActive(false);
+
+        FindObjectOfType<GameManager>().NextMatch();
+    }
+
+    public void ReturnMenu()
+    {
+        SceneManager.LoadScene(_menuSceneName);
     }
 }

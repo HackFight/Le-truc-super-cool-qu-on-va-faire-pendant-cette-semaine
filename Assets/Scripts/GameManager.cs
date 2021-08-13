@@ -64,4 +64,9 @@ public class GameManager : MonoBehaviour
     {
         _playerScores.Add(0);
     }
+
+    public void NextMatch()
+    {
+
+    }
 }
