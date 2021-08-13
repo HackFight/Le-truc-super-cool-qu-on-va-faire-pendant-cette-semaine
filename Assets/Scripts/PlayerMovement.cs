@@ -3,6 +3,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour 
 {
@@ -131,6 +133,7 @@ public class PlayerMovement : MonoBehaviour
 					{
 						canDash = false;
 						canTurn = false;
+						soundManager.PlayDash();
 						Dash();
 						Invoke("SetDashToTrue", dashCoolDown);
 						Invoke("SetIsDashingToFalse", dashTime);
@@ -313,6 +316,9 @@ public class PlayerMovement : MonoBehaviour
 		if (canShoot)
 		{
 			canShoot = false;
+
+			soundManager.PlayShoot();
+
 			GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 			temporaryBullet.GetComponent<Rigidbody>().AddForce((bulletSpawnPoint.position - transform.position) * bulletSpeed);
 			Invoke("SetCanShootToTrue", shootCooldown);

@@ -12,6 +12,9 @@ public class SoundManager : MonoBehaviour
     public AudioSource walkcycle_turn;
     public AudioSource walkcycle_turn2;
 
+    public List<AudioSource> shoots;
+    public List<AudioSource> dashes;
+
     private GameManager gameManager;
     private PlayerManager playerManager;
     private Egg eggScript;
@@ -56,5 +59,18 @@ public class SoundManager : MonoBehaviour
                 battle_hard.volume = 1 - Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
             }
         }
+    }
+
+    public void PlayShoot()
+    {
+        int index = Random.Range(0, shoots.Count);
+
+        shoots[index].Play();
+    }
+    public void PlayDash()
+    {
+        int index = Random.Range(0, dashes.Count);
+
+        dashes[index].Play();
     }
 }
