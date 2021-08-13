@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour
     private PlayerManager playerManager;
     private Egg eggScript;
     private PlayerMovement playerMovement;
+
     public bool isMusicActive = true;
 
     int statePlay = 0;
@@ -157,5 +158,17 @@ public class SoundManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void ToggleMusic()
+    {
+        if (isMusicActive)
+        {
+            isMusicActive = false;
+        }
+        else
+        {
+            isMusicActive = true;
+        }
     }
 }
