@@ -10,9 +10,13 @@ public class Egg : MonoBehaviour
 
     private GameManager gameManager;
 
+    private Vector3 initialPosition;
+
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
+
+        initialPosition = transform.position;
     }
 
     private void Update()
@@ -21,5 +25,15 @@ public class Egg : MonoBehaviour
         {
             gameManager.IncrementChrono();
         }
+    }
+
+    public void Reset()
+    {
+        transform.position = initialPosition;
+
+        gameObject.SetActive(true);
+
+        isGrabed = false;
+        canBeGrabed = true;
     }
 }

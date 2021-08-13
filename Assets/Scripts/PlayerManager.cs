@@ -20,6 +20,8 @@ public class PlayerManager : MonoBehaviour
 
     private GameManager _gameManager;
 
+    private bool isEndMatch = false;
+
 
 	void Start()
 	{
@@ -41,6 +43,21 @@ public class PlayerManager : MonoBehaviour
 			}
 		}
 
+        if (!isEndMatch)
+        {
+			EndMatch();
+        }
+	}
+
+
+	bool JoinButtonWasPressedOnDevice(InputDevice inputDevice)
+	{
+		return inputDevice.Action1.WasPressed || inputDevice.Action2.WasPressed || inputDevice.Action3.WasPressed || inputDevice.Action4.WasPressed;
+	}
+
+    private void EndMatch()
+    {
+
         int nbMonsterDead = 0;
         int nbPlayerDead = 0;
         foreach (var player in players)
@@ -49,16 +66,20 @@ public class PlayerManager : MonoBehaviour
             {
                 nbMonsterDead++;
             }
-            else if(player.isDead)
+            else if (player.isDead)
             {
                 nbPlayerDead++;
             }
         }
 
-		//Monster is dead => Players victory
+        //List<int> playerIndexWithIncreasedPoint;
+
+        //Monster is dead => Players victory
         if (nbMonsterDead == 1)
         {
-            for (var index = 0; index < players.Count; index++)
+            isEndMatch = true;
+
+			for (var index = 0; index < players.Count; index++)
             {
                 var player = players[index];
                 if (player.isMonster) continue;
@@ -70,7 +91,9 @@ public class PlayerManager : MonoBehaviour
         }
         else if (players.Count > 1 && nbPlayerDead == players.Count - 1) // All player are dead => Monster victory
         {
-            for (var index = 0; index < players.Count; index++)
+            isEndMatch = true; 
+
+			for (var index = 0; index < players.Count; index++)
             {
                 var player = players[index];
                 if (!player.isMonster) continue;
@@ -79,15 +102,8 @@ public class PlayerManager : MonoBehaviour
             }
 
             _gameManager.ShowScoreScreen();
-		}
-	}
-
-
-	bool JoinButtonWasPressedOnDevice(InputDevice inputDevice)
-	{
-		return inputDevice.Action1.WasPressed || inputDevice.Action2.WasPressed || inputDevice.Action3.WasPressed || inputDevice.Action4.WasPressed;
-	}
-
+        }
+    }
 
 	PlayerMovement FindPlayerUsingDevice(InputDevice inputDevice)
 	{
@@ -110,8 +126,7 @@ public class PlayerManager : MonoBehaviour
 		return FindPlayerUsingDevice(inputDevice) == null;
 	}
 
-
-	void OnDeviceDetached(InputDevice inputDevice)
+    void OnDeviceDetached(InputDevice inputDevice)
 	{
 		var player = FindPlayerUsingDevice(inputDevice);
 		if (player != null)
@@ -155,5 +170,15 @@ public class PlayerManager : MonoBehaviour
     public int GetPlayerCount()
     {
         return players.Count;
+    }
+
+    public void NextMatch()
+    {
+        foreach (var playerMovement in players)
+        {
+            playerMovement.Reset();
+        }
+
+        isEndMatch = false;
     }
 }

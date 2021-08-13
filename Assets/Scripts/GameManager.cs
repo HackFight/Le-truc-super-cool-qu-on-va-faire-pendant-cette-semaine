@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     {
         playerManager = FindObjectOfType<PlayerManager>();
         _playerScores = new List<int>();
+
+        eggScript = FindObjectOfType<Egg>();
     }
 
     public void IncrementChrono()
@@ -52,10 +54,11 @@ public class GameManager : MonoBehaviour
         for (var index = 0; index < _playerScores.Count; index++)
         {
             var playerScore = _playerScores[index];
+            Debug.Log("Score[" + index + "] = " + playerScore);
 
             if (playerScore == _winingScore)
             {
-
+                Debug.Log("VICTORY");
             }
         }
     }
@@ -67,6 +70,10 @@ public class GameManager : MonoBehaviour
 
     public void NextMatch()
     {
+        playerManager.NextMatch();
 
+        chrono = 0;
+
+        eggScript.Reset();
     }
 }

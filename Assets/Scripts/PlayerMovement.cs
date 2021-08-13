@@ -3,10 +3,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 
-public class PlayerMovement : MonoBehaviour 
+public class PlayerMovement : MonoBehaviour
 {
 	public int playerID;
 
@@ -62,6 +60,8 @@ public class PlayerMovement : MonoBehaviour
 	public bool canShoot = true;
 	public bool immortal = false;
 
+	private Vector3 initialPosition;
+
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
 		shockZone.SetActive(false);
 
-		if(playerID == 0)
+		if (playerID == 0)
 		{
 			nose.GetComponent<SpriteRenderer>().color = Color.blue;
 		}
@@ -95,6 +95,8 @@ public class PlayerMovement : MonoBehaviour
 		{
 			nose.GetComponent<SpriteRenderer>().color = Color.green;
 		}
+
+		initialPosition = transform.position;
 	}
 
 	void Update()
@@ -105,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
 			{
 				Die();
 			}
-			
+
 			if (((Vector3)Device.Direction).magnitude > 0.5f)
 			{
 				monsterFront.transform.position = front.transform.position;
@@ -133,7 +135,6 @@ public class PlayerMovement : MonoBehaviour
 					{
 						canDash = false;
 						canTurn = false;
-						soundManager.PlayDash();
 						Dash();
 						Invoke("SetDashToTrue", dashCoolDown);
 						Invoke("SetIsDashingToFalse", dashTime);
@@ -179,11 +180,11 @@ public class PlayerMovement : MonoBehaviour
 
 			if (((Vector3)Device.Direction).magnitude > 0.5f)
 			{
-				if (canTurn &&  !isMonster)
+				if (canTurn && !isMonster)
 				{
 					front.position = transform.position + movement;
 				}
-				else if(isMonster)
+				else if (isMonster)
 				{
 					monsterFront.transform.position = transform.position + movement;
 				}
@@ -251,12 +252,13 @@ public class PlayerMovement : MonoBehaviour
 					}
 				}
 
-				if((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.walkcycle_run.isPlaying == false)
-                {
+				if ((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.walkcycle_run.isPlaying == false)
+				{
 					soundManager.walkcycle_run.Play();
-                }
+				}
 
-				if((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.walkcycle_run.isPlaying == true){
+				if ((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.walkcycle_run.isPlaying == true)
+				{
 					soundManager.walkcycle_run.Stop();
 				}
 			}
@@ -316,9 +318,6 @@ public class PlayerMovement : MonoBehaviour
 		if (canShoot)
 		{
 			canShoot = false;
-
-			soundManager.PlayShoot();
-
 			GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 			temporaryBullet.GetComponent<Rigidbody>().AddForce((bulletSpawnPoint.position - transform.position) * bulletSpeed);
 			Invoke("SetCanShootToTrue", shootCooldown);
@@ -375,7 +374,7 @@ public class PlayerMovement : MonoBehaviour
 			}
 			else
 			{
-				if(collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDashing && immortal == false)
+				if (collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDashing && immortal == false)
 				{
 					immortal = true;
 					view.GetComponent<MeshRenderer>().material.color = Color.green;
@@ -393,7 +392,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private void SetCanShockToTrue()
 	{
-		canShock= true;
+		canShock = true;
 	}
 
 	private void SetCanShootToTrue()
@@ -417,5 +416,31 @@ public class PlayerMovement : MonoBehaviour
 	{
 		isDead = true;
 		view.GetComponent<MeshRenderer>().material.color = Color.grey;
+	}
+
+	public void Reset()
+	{
+		//Bools
+		haveEggInHands = false;
+		isLeftTriggerPressed = false;
+		canDash = true;
+		isDashing = false;
+		canTurn = true;
+		isMonster = false;
+		shock = false;
+		isDead = false;
+		canShock = true;
+		canShoot = true;
+		immortal = false;
+
+		//Resest
+		canDash = true;
+		playerLifes = playerMaxLifes;
+		shockZone.SetActive(false);
+		isDead = false;
+
+		view.GetComponent<MeshRenderer>().material.color = Color.grey;
+
+		transform.position = initialPosition;
 	}
 }

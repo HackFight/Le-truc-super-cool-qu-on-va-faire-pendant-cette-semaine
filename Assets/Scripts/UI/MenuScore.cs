@@ -75,6 +75,11 @@ public class MenuScore : MonoBehaviour
         _menuScore.SetActive(false);
 
         FindObjectOfType<GameManager>().NextMatch();
+
+        foreach (Transform child in _playerListParent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
     }
 
     public void ReturnMenu()
