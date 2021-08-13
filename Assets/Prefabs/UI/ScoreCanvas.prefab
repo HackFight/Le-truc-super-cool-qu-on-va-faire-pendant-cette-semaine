@@ -388,3 +388,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefabPlayerScoreMenu: {fileID: 4210274578788411650, guid: b3850f792f7796b49954c792dbcdb5c8, type: 3}
   _playerListParent: {fileID: 5169430646322688687}
+  _menuScore: {fileID: 1694344685299537472}
