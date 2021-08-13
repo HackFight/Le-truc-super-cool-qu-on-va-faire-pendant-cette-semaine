@@ -16,8 +16,12 @@ public class Menu : MonoBehaviour
     {
         if (isTutoOpen && Input.GetAxis("Cancel") == 1)
         {
-            isTutoOpen = false;
             tuto.Play("CloseTuto");
+        }
+
+        if (tuto.GetCurrentAnimatorStateInfo(0).IsTag("Ok"))
+        {
+            isTutoOpen = false;
             tutoPanel.SetActive(false);
         }
     }
