@@ -18,12 +18,15 @@ public class PlayerManager : MonoBehaviour
 
 	List<PlayerMovement> players = new List<PlayerMovement>(maxPlayers);
 
+    private GameManager _gameManager;
 
 
 	void Start()
 	{
 		InputManager.OnDeviceDetached += OnDeviceDetached;
-	}
+
+        _gameManager = FindObjectOfType<GameManager>();
+    }
 
 
 	void Update()
@@ -36,6 +39,46 @@ public class PlayerManager : MonoBehaviour
 			{
 				CreatePlayer(inputDevice);
 			}
+		}
+
+        int nbMonsterDead = 0;
+        int nbPlayerDead = 0;
+        foreach (var player in players)
+        {
+            if (player.isMonster && player.isDead)
+            {
+                nbMonsterDead++;
+            }
+            else if(player.isDead)
+            {
+                nbPlayerDead++;
+            }
+        }
+
+		//Monster is dead => Players victory
+        if (nbMonsterDead == 1)
+        {
+            for (var index = 0; index < players.Count; index++)
+            {
+                var player = players[index];
+                if (player.isMonster) continue;
+
+                _gameManager.IncrementScore(1, index);
+            }
+
+            _gameManager.ShowScoreScreen();
+        }
+        else if (players.Count > 1 && nbPlayerDead == players.Count - 1) // All player are dead => Monster victory
+        {
+            for (var index = 0; index < players.Count; index++)
+            {
+                var player = players[index];
+                if (!player.isMonster) continue;
+
+                _gameManager.IncrementScore(nbPlayerDead, index);
+            }
+
+            _gameManager.ShowScoreScreen();
 		}
 	}
 
@@ -92,10 +135,12 @@ public class PlayerManager : MonoBehaviour
 			player.playerID = players.Count;
 			players.Add(player);
 
+			_gameManager.AddPlayer();
+
 			return player;
 		}
 
-		return null;
+        return null;
 	}
 
 
@@ -106,4 +151,9 @@ public class PlayerManager : MonoBehaviour
 		player.Device = null;
 		Destroy(player.gameObject);
 	}
+
+    public int GetPlayerCount()
+    {
+        return players.Count;
+    }
 }

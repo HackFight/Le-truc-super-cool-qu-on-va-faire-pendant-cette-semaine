@@ -8,11 +8,21 @@ public class MenuScore : MonoBehaviour
     [SerializeField] private GameObject _prefabPlayerScoreMenu;
     [SerializeField] private GameObject _playerListParent;
 
+    [Header("Menu")] 
+    [SerializeField] private GameObject _menuScore;
+
     private int _nbPlayer;
     private int _nbTrophy;
 
+    void Start()
+    {
+        _menuScore.SetActive(false);
+    }
+
     public void Init(int nbPlayer, int nbTrophy)
     {
+        _menuScore.SetActive(true);
+
         _nbPlayer = nbPlayer;
         _nbTrophy = nbTrophy;
 
@@ -23,5 +33,10 @@ public class MenuScore : MonoBehaviour
 
             instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i);
         }
+    }
+
+    public bool IsActive()
+    {
+        return _menuScore.activeSelf;
     }
 }
