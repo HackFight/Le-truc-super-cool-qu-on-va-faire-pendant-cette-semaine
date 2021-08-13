@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Shock : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision.CompareTag("Player") && collision.gameObject != transform.parent)
         {
-
             collision.GetComponent<PlayerMovement>().playerLifes--;
-
+            Debug.Log("ICI");
         }
     }
 }
