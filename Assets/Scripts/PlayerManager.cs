@@ -8,12 +8,12 @@ public class PlayerManager : MonoBehaviour
 
 	const int maxPlayers = 4;
 
-	List<Vector2> playerPositions = new List<Vector2>() 
+	List<Vector3> playerPositions = new List<Vector3>() 
 	{
-			new Vector2( -1, 1),
-			new Vector2( 1, 1),
-			new Vector2( -1, -1),
-			new Vector2( 1, -1),
+			new Vector3( -1, 1, 1),
+			new Vector3( 1, 1, 1),
+			new Vector3( -1, 1, -1),
+			new Vector3( 1, 1, -1),
 	};
 
 	List<PlayerMovement> players = new List<PlayerMovement>(maxPlayers);
@@ -141,8 +141,8 @@ public class PlayerManager : MonoBehaviour
 		if (players.Count < maxPlayers)
 		{
 			// Pop a position off the list. We'll add it back if the player is removed.
-			var playerPosition = playerPositions[0];
-			playerPositions.RemoveAt(0);
+			var playerPosition = playerPositions[players.Count];
+			//playerPositions.RemoveAt(0);
 
 			var gameObject = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
 			var player = gameObject.GetComponent<PlayerMovement>();

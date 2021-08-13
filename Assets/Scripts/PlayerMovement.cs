@@ -471,5 +471,38 @@ public class PlayerMovement : MonoBehaviour
 		isDead = false;
 
 		transform.position = initialPosition;
+
+		modelGolem.SetActive(false);
+
+if (playerID == 0)
+        {
+			model0.SetActive(true);
+            animator = model0.GetComponent<Animator>();
+            model1.SetActive(false);
+            model2.SetActive(false);
+            model3.SetActive(false);
+		}
+		else if (playerID == 1)
+        {
+            model0.SetActive(false);
+            model1.SetActive(true);
+            animator = model1.GetComponent<Animator>();
+			model2.SetActive(false);
+            model3.SetActive(false);
+		}
+		else if (playerID == 2)
+        {
+            model0.SetActive(false);
+            model1.SetActive(false);
+            model2.SetActive(true);
+            model3.SetActive(false);
+		}
+		else if (playerID == 3)
+        {
+            model0.SetActive(false);
+            model1.SetActive(false);
+            model2.SetActive(false);
+            model3.SetActive(true);
+		}
 	}
 }
