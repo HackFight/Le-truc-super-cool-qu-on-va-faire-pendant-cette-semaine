@@ -918,6 +918,10 @@ PrefabInstance:
       value: Menu Manager
       objectReference: {fileID: 0}
     - target: {fileID: 4589108025569511719, guid: 4a65b8544460bab4ba12e23a5cd21060, type: 3}
+      propertyPath: tuto
+      value: 
+      objectReference: {fileID: 1118699268}
+    - target: {fileID: 4589108025569511719, guid: 4a65b8544460bab4ba12e23a5cd21060, type: 3}
       propertyPath: tutoPanel
       value: 
       objectReference: {fileID: 1118699264}

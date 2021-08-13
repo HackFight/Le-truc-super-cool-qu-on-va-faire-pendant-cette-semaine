@@ -193,8 +193,6 @@ public class PlayerMovement : MonoBehaviour
 
 			if (isMonster == false)
 			{
-				//Vector3 lookDirection = front.position - transform.position;
-				//float lookAngle = Vector3.SignedAngle(Vector3.right, lookDirection, new Vector3(0, 1, 0));
 
 				if (canTurn)
 				{
@@ -203,8 +201,6 @@ public class PlayerMovement : MonoBehaviour
 					Quaternion lookRotation = Quaternion.LookRotation(dirCross, Vector3.up);
 					Vector3 rotation = Quaternion.Lerp(turningStuff.transform.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
 					turningStuff.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-
-					//transform.rotation = Quaternion.Euler(0, lookAngle, 0);
 				}
 			}
 			else

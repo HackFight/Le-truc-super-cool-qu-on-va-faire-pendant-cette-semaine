@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 using UnityEngine.SceneManagement;
 
@@ -9,11 +10,16 @@ public class Menu : MonoBehaviour
 
     public GameObject tutoPanel;
     private bool isTutoOpen;
+    public Animator tuto;
 
-    void Start()
+    private void Update()
     {
-        
-        
+        if (isTutoOpen && Input.GetAxis("Cancel") == 1)
+        {
+            isTutoOpen = false;
+            tuto.Play("CloseTuto");
+            tutoPanel.SetActive(false);
+        }
     }
 
     public void LoadGame()
@@ -42,7 +48,11 @@ public class Menu : MonoBehaviour
 
     public void OpenTuto()
     {
-        isTutoOpen = true;
-        tutoPanel.SetActive(true);
+        if (!isTutoOpen)
+        {
+            isTutoOpen = true;
+            tuto.SetBool("isTutoOpen", true);
+            tutoPanel.SetActive(true);
+        }
     }
 }

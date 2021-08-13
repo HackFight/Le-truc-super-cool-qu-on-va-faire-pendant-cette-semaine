@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tutoPanel: {fileID: 0}
+  tuto: {fileID: 0}
