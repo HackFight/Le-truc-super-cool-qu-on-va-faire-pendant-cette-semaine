@@ -9,7 +9,6 @@ public class Shock : MonoBehaviour
         if (collision.CompareTag("Player") && collision.gameObject != transform.parent)
         {
             collision.GetComponent<PlayerMovement>().playerLifes--;
-            Debug.Log("ICI");
         }
     }
 }
