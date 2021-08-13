@@ -552,18 +552,29 @@ MonoBehaviour:
   moveSpeed: 0.1
   speedMalus: 0
   monsterTurnSpeed: 0.5
-  turnSpeed: 100
+  turnSpeed: 500
   dashSpeed: 1
   dashTime: 0.1
   dashCoolDown: 5
   shockCooldown: 5
-  shootCooldown: 0.1
+  shootCooldown: 0.25
   bulletSpeed: 600
   playerLifes: 0
   playerMaxLifes: 3
   monsterMaxLifes: 5
   immortalityTime: 1
   monsterImmortalityTime: 0.5
+  haveEggInHands: 0
+  isLeftTriggerPressed: 0
+  canDash: 1
+  isDashing: 0
+  canTurn: 1
+  isMonster: 0
+  shock: 0
+  isDead: 0
+  canShock: 1
+  canShoot: 1
+  immortal: 0
 --- !u!136 &9053011885585448998
 CapsuleCollider:
   m_ObjectHideFlags: 0
