@@ -135,6 +135,8 @@ public class PlayerMovement : MonoBehaviour
 					{
 						canDash = false;
 						canTurn = false;
+
+						soundManager.PlayDash(playerID);
 						Dash();
 						Invoke("SetDashToTrue", dashCoolDown);
 						Invoke("SetIsDashingToFalse", dashTime);
@@ -252,14 +254,14 @@ public class PlayerMovement : MonoBehaviour
 					}
 				}
 
-				if ((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.walkcycle_run.isPlaying == false)
-				{
-					soundManager.walkcycle_run.Play();
-				}
+				if((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.IsRunning(playerID) == false)
+                {
+					soundManager.Run(playerID);
+                }
 
-				if ((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.walkcycle_run.isPlaying == true)
+				if((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.IsRunning(playerID) == true)
 				{
-					soundManager.walkcycle_run.Stop();
+					soundManager.StopRun(playerID);
 				}
 			}
 		}
