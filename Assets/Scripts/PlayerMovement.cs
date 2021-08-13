@@ -320,6 +320,7 @@ public class PlayerMovement : MonoBehaviour
 		if (canShoot)
 		{
 			canShoot = false;
+			soundManager.PlayShoot();
 			GameObject temporaryBullet = Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 			temporaryBullet.GetComponent<Rigidbody>().AddForce((bulletSpawnPoint.position - transform.position) * bulletSpeed);
 			Invoke("SetCanShootToTrue", shootCooldown);
