@@ -16,17 +16,24 @@ public class UIPanelScorePlayer : MonoBehaviour
 
     private int _nbTrophies;
     private int _playerID;
-    
+    private int _score;
 
-    public void Init(int nbTrophies, int playerID)
+
+    public void Init(int nbTrophies, int playerID, int score)
     {
         _nbTrophies = nbTrophies;
         _playerID = playerID;
+        _score = score;
 
         for (int i = 0; i < nbTrophies; i++)
         {
             var trophyIconInstance = Instantiate(_prefabTrophyIcon);
             trophyIconInstance.transform.parent = _trophiesList.transform;
+
+            if (i >= _score)
+            {
+                trophyIconInstance.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0.2f);
+            }
 
             _playerProfileImage.sprite = _playerSprites[_playerID];
         }

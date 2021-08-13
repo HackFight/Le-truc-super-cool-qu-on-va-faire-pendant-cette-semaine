@@ -19,7 +19,7 @@ public class MenuScore : MonoBehaviour
         _menuScore.SetActive(false);
     }
 
-    public void Init(int nbPlayer, int nbTrophy)
+    public void Init(int nbPlayer, int nbTrophy, List<int> scores)
     {
         _menuScore.SetActive(true);
 
@@ -31,7 +31,7 @@ public class MenuScore : MonoBehaviour
             var instance = Instantiate(_prefabPlayerScoreMenu);
             instance.transform.parent = _playerListParent.transform;
 
-            instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i);
+            instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i, scores[i]);
         }
     }
 

@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        menuScore.Init(_playerScores.Count, _winingScore);
+        menuScore.Init(_playerScores.Count, _winingScore, _playerScores);
 
         //Count score
         for (var index = 0; index < _playerScores.Count; index++)
