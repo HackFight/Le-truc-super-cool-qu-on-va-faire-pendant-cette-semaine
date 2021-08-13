@@ -9,11 +9,9 @@ public class PlayerMovement : MonoBehaviour
 	public int playerID;
 
 	public InputDevice Device { get; set; }
-	public GameObject nose;
 	public Transform attach;
 	public Transform bulletSpawnPoint;
 	public Transform front;
-	public GameObject view;
 	public GameObject shockZone;
 	public TextMeshProUGUI lifesText;
 	public GameObject bullet;
@@ -62,14 +60,22 @@ public class PlayerMovement : MonoBehaviour
 
 	private Vector3 initialPosition;
 
+    [Header("3D model")] 
+    [SerializeField] private GameObject model0;
+    [SerializeField] private GameObject model1;
+    [SerializeField] private GameObject model2;
+    [SerializeField] private GameObject model3;
+    [SerializeField] private GameObject modelGolem;
+
+    private Animator animator;
+    private Animator animatorGolem;
+
 	private void Start()
 	{
 		eggScript = FindObjectOfType<Egg>();
 		rg = GetComponent<Rigidbody>();
 		gameManager = FindObjectOfType<GameManager>();
 		soundManager = FindObjectOfType<SoundManager>();
-
-		view.GetComponent<MeshRenderer>().material.color = Color.white;
 
 		monsterFront = Instantiate(monsterFrontPrefab, front.position, front.rotation);
 
@@ -79,25 +85,43 @@ public class PlayerMovement : MonoBehaviour
 
 		shockZone.SetActive(false);
 
+        initialPosition = transform.position;
+
+        animatorGolem = modelGolem.GetComponent<Animator>();
+
+		modelGolem.SetActive(false);
+
 		if (playerID == 0)
-		{
-			nose.GetComponent<SpriteRenderer>().color = Color.blue;
+        {
+			model0.SetActive(true);
+            animator = model0.GetComponent<Animator>();
+            model1.SetActive(false);
+            model2.SetActive(false);
+            model3.SetActive(false);
 		}
 		else if (playerID == 1)
-		{
-			nose.GetComponent<SpriteRenderer>().color = Color.red;
+        {
+            model0.SetActive(false);
+            model1.SetActive(true);
+            animator = model1.GetComponent<Animator>();
+			model2.SetActive(false);
+            model3.SetActive(false);
 		}
 		else if (playerID == 2)
-		{
-			nose.GetComponent<SpriteRenderer>().color = Color.yellow;
+        {
+            model0.SetActive(false);
+            model1.SetActive(false);
+            model2.SetActive(true);
+            model3.SetActive(false);
 		}
 		else if (playerID == 3)
-		{
-			nose.GetComponent<SpriteRenderer>().color = Color.green;
+        {
+            model0.SetActive(false);
+            model1.SetActive(false);
+            model2.SetActive(false);
+            model3.SetActive(true);
 		}
-
-		initialPosition = transform.position;
-	}
+    }
 
 	void Update()
 	{
@@ -140,6 +164,8 @@ public class PlayerMovement : MonoBehaviour
 						Dash();
 						Invoke("SetDashToTrue", dashCoolDown);
 						Invoke("SetIsDashingToFalse", dashTime);
+
+						animator.SetTrigger("IsDash");
 					}
 				}
 			}
@@ -155,10 +181,8 @@ public class PlayerMovement : MonoBehaviour
 
 				if (isMonster)
 				{
-
 					Shock();
-
-				}
+                }
 				else
 				{
 					if (haveEggInHands == true)
@@ -257,11 +281,13 @@ public class PlayerMovement : MonoBehaviour
 				if((movement.x >= 0.1 || movement.z >= 0.1 || movement.x <= -0.1 || movement.z <= -0.1) && soundManager.IsRunning(playerID) == false)
                 {
 					soundManager.Run(playerID);
-                }
+                    animator.SetBool("Is Run", true);
+				}
 
 				if((movement.x < 0.1 && movement.z < 0.1 && movement.x > -0.1 && movement.z > -0.1) && soundManager.IsRunning(playerID) == true)
 				{
 					soundManager.StopRun(playerID);
+                    animator.SetBool("Is Run", false);
 				}
 			}
 		}
@@ -307,6 +333,7 @@ public class PlayerMovement : MonoBehaviour
 			Invoke("SetCanShockToTrue", shockCooldown);
 			Invoke("SetShockToTrue", 0.5f);
 			shockZone.SetActive(true);
+            animatorGolem.SetTrigger("IsBooming");
 		}
 	}
 
@@ -336,8 +363,13 @@ public class PlayerMovement : MonoBehaviour
 
 		Drop();
 
-		view.GetComponent<MeshRenderer>().material.color = Color.red;
-	}
+        model0.SetActive(false);
+        model1.SetActive(false);
+        model2.SetActive(false);
+        model3.SetActive(false);
+
+		modelGolem.SetActive(true);
+    }
 
 	private void OnTriggerStay(Collider collision)
 	{
@@ -368,7 +400,6 @@ public class PlayerMovement : MonoBehaviour
 				{
 					immortal = true;
 					Invoke("SetImmortalToFalse", immortalityTime);
-					view.GetComponent<MeshRenderer>().material.color = Color.green;
 
 					playerLifes--;
 
@@ -380,7 +411,6 @@ public class PlayerMovement : MonoBehaviour
 				if (collision.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDashing && immortal == false)
 				{
 					immortal = true;
-					view.GetComponent<MeshRenderer>().material.color = Color.green;
 					Invoke("SetImmortalToFalse", monsterImmortalityTime);
 					playerLifes--;
 				}
@@ -411,14 +441,12 @@ public class PlayerMovement : MonoBehaviour
 
 	private void SetImmortalToFalse()
 	{
-		view.GetComponent<MeshRenderer>().material.color = Color.white;
 		immortal = false;
 	}
 
 	private void Die()
 	{
 		isDead = true;
-		view.GetComponent<MeshRenderer>().material.color = Color.grey;
 	}
 
 	public void Reset()
@@ -441,8 +469,6 @@ public class PlayerMovement : MonoBehaviour
 		playerLifes = playerMaxLifes;
 		shockZone.SetActive(false);
 		isDead = false;
-
-		view.GetComponent<MeshRenderer>().material.color = Color.grey;
 
 		transform.position = initialPosition;
 	}
