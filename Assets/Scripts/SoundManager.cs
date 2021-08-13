@@ -60,8 +60,9 @@ public class SoundManager : MonoBehaviour
             }
             if (statePlay == 1 && eggScript.isGrabed)
             {
-                battle_soft.volume = Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
-                battle_hard.volume = 1 - Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
+                //battle_soft.volume = Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
+                //battle_hard.volume = 1 - Mathf.Clamp(gameManager.timeToOpenEgg, 0f, 1f);
+                
             }
         }
     }
