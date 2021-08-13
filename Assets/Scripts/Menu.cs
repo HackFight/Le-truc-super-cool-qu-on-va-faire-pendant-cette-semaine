@@ -59,4 +59,12 @@ public class Menu : MonoBehaviour
             tutoPanel.SetActive(true);
         }
     }
+
+    public void QuitGame()
+    {
+        if (!isTutoOpen)
+        {
+            Application.Quit();
+        }
+    }
 }
