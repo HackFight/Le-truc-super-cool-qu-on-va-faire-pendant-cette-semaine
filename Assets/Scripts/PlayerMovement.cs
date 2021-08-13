@@ -65,8 +65,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject model1;
     [SerializeField] private GameObject model2;
     [SerializeField] private GameObject model3;
+    [SerializeField] private GameObject modelGolem;
 
     private Animator animator;
+    private Animator animatorGolem;
 
 	private void Start()
 	{
@@ -85,7 +87,11 @@ public class PlayerMovement : MonoBehaviour
 
         initialPosition = transform.position;
 
-        if (playerID == 0)
+        animatorGolem = modelGolem.GetComponent<Animator>();
+
+		modelGolem.SetActive(false);
+
+		if (playerID == 0)
         {
 			model0.SetActive(true);
             animator = model0.GetComponent<Animator>();
@@ -175,10 +181,8 @@ public class PlayerMovement : MonoBehaviour
 
 				if (isMonster)
 				{
-
 					Shock();
-
-				}
+                }
 				else
 				{
 					if (haveEggInHands == true)
@@ -329,6 +333,7 @@ public class PlayerMovement : MonoBehaviour
 			Invoke("SetCanShockToTrue", shockCooldown);
 			Invoke("SetShockToTrue", 0.5f);
 			shockZone.SetActive(true);
+            animatorGolem.SetTrigger("IsBooming");
 		}
 	}
 
@@ -357,7 +362,14 @@ public class PlayerMovement : MonoBehaviour
 		playerLifes = monsterMaxLifes;
 
 		Drop();
-	}
+
+        model0.SetActive(false);
+        model1.SetActive(false);
+        model2.SetActive(false);
+        model3.SetActive(false);
+
+		modelGolem.SetActive(true);
+    }
 
 	private void OnTriggerStay(Collider collision)
 	{
