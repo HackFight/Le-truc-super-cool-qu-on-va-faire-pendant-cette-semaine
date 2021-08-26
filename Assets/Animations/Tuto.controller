@@ -30,16 +30,10 @@ AnimatorController:
   m_PrefabAsset: {fileID: 0}
   m_Name: Tuto
   serializedVersion: 5
-  m_AnimatorParameters:
-  - m_Name: isTutoOpen
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+  m_AnimatorParameters: []
   m_AnimatorLayers:
   - serializedVersion: 5
-    m_Name: Base Layer
+    m_Name: TutoLayer
     m_StateMachine: {fileID: 798089825480662374}
     m_Mask: {fileID: 0}
     m_Motions: []
@@ -84,7 +78,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Base Layer
+  m_Name: TutoLayer
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 5398906080826060905}

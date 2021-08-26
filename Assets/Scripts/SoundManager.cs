@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour
     private PlayerManager playerManager;
     private Egg eggScript;
     private PlayerMovement playerMovement;
+    public DataBase dataBase;
 
     public bool isMusicActive = true;
 
@@ -35,6 +36,9 @@ public class SoundManager : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         eggScript = FindObjectOfType<Egg>();
         playerMovement = FindObjectOfType<PlayerMovement>();
+        dataBase = FindObjectOfType<DataBase>();
+
+        isMusicActive = dataBase.isMusicActive;
 
         if (isMusicActive)
         {
@@ -43,6 +47,8 @@ public class SoundManager : MonoBehaviour
     }
     void Update()
     {
+        isMusicActive = dataBase.isMusicActive;
+
         if (isMusicActive)
         {
             if (battle_intro.isPlaying == false && statePlay == 0)
@@ -159,17 +165,5 @@ public class SoundManager : MonoBehaviour
         }
 
         return true;
-    }
-
-    public void ToggleMusic()
-    {
-        if (isMusicActive)
-        {
-            isMusicActive = false;
-        }
-        else
-        {
-            isMusicActive = true;
-        }
     }
 }

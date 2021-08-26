@@ -12,8 +12,18 @@ public class Menu : MonoBehaviour
     private bool isTutoOpen;
     public Animator tuto;
 
+    public GameObject optionsPanel;
+    private bool isOptionOpen;
+    public Animator options;
+
+    public DataBase dataBase;
+
+    public bool isMusicActive = true;
+
     private void Update()
     {
+        dataBase.isMusicActive = isMusicActive;
+
         if (isTutoOpen && Input.GetAxis("Cancel") == 1)
         {
             tuto.Play("CloseTuto");
@@ -24,27 +34,39 @@ public class Menu : MonoBehaviour
             isTutoOpen = false;
             tutoPanel.SetActive(false);
         }
+
+        if (isOptionOpen && Input.GetAxis("Cancel") ==  1)
+        {
+            options.Play("CloseOption");
+        }
+
+        if (options.GetCurrentAnimatorStateInfo(0).IsTag("Ok"))
+        {
+            isOptionOpen = false;
+            optionsPanel.SetActive(false);
+        }
     }
 
     public void LoadGame()
     {
-        if (!isTutoOpen)
+        if (!isTutoOpen && !isOptionOpen)
         {
             SceneManager.LoadScene(1);
         }
     }
 
-    public void LoadOptions()
+    public void OpenOptions()
     {
-        if (!isTutoOpen)
+        if (!isTutoOpen && !isOptionOpen)
         {
-            SceneManager.LoadScene(2);
+            isOptionOpen = true;
+            optionsPanel.SetActive(true);
         }
     }
 
     public void GoBack()
     {
-        if (!isTutoOpen)
+        if (!isTutoOpen && !isOptionOpen)
         {
             SceneManager.LoadScene(0);
         }
@@ -52,19 +74,30 @@ public class Menu : MonoBehaviour
 
     public void OpenTuto()
     {
-        if (!isTutoOpen)
+        if (!isTutoOpen && !isOptionOpen)
         {
             isTutoOpen = true;
-            tuto.SetBool("isTutoOpen", true);
             tutoPanel.SetActive(true);
         }
     }
 
     public void QuitGame()
     {
-        if (!isTutoOpen)
+        if (!isTutoOpen && !isOptionOpen)
         {
             Application.Quit();
+        }
+    }
+
+    public void ToggleMusic()
+    {
+        if (isMusicActive)
+        {
+            isMusicActive = false;
+        }
+        else
+        {
+            isMusicActive = true;
         }
     }
 }
