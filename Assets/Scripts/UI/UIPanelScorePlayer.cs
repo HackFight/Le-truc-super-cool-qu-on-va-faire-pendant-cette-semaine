@@ -37,5 +37,7 @@ public class UIPanelScorePlayer : MonoBehaviour
 
             _playerProfileImage.sprite = _playerSprites[_playerID];
         }
+
+        transform.localScale = Vector3.one;
     }
 }

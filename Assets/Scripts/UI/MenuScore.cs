@@ -16,13 +16,41 @@ public class MenuScore : MonoBehaviour
     [SerializeField] private GameObject _buttonNextMatch;
     [SerializeField] private string _menuSceneName;
     [SerializeField] private GameObject _buttonMenu;
+    [SerializeField] private GameObject _buttonStart;
 
     private int _nbPlayer;
     private int _nbTrophy;
 
     void Start()
     {
-        _menuScore.SetActive(false);
+        //_menuScore.SetActive(false);
+    }
+
+    public void PlayerConnection(int nbPlayer)
+    {
+        _menuScore.SetActive(true);
+
+        foreach (Transform child in _playerListParent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        _nbPlayer = nbPlayer;
+
+        for (int i = 0; i < _nbPlayer; i++)
+        {
+            var instance = Instantiate(_prefabPlayerScoreMenu);
+            instance.transform.parent = _playerListParent.transform;
+
+            instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i, 0);
+        }
+
+        _buttonMenu.SetActive(false);
+        _buttonNextMatch.SetActive(false);
+        _buttonStart.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(_buttonStart);
+
     }
 
     public void Init(int nbPlayer, int nbTrophy, List<int> scores)
@@ -41,8 +69,10 @@ public class MenuScore : MonoBehaviour
 
             instance.GetComponent<UIPanelScorePlayer>().Init(_nbTrophy, i, scores[i]);
 
-            if (scores[i] == nbTrophy)
+            Debug.Log("Score[" + i + "] = " + scores[i]);
+            if (scores[i] >= nbTrophy)
             {
+                Debug.Log("Player " + i + " won !!!");
                 isOver = true;
             }
         }
@@ -54,6 +84,8 @@ public class MenuScore : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_buttonMenu);
 
             _buttonNextMatch.SetActive(false);
+
+            _buttonStart.SetActive(false);
         }
         else
         {
@@ -61,6 +93,8 @@ public class MenuScore : MonoBehaviour
 
             _buttonNextMatch.SetActive(true);
             EventSystem.current.SetSelectedGameObject(_buttonNextMatch);
+
+            _buttonStart.SetActive(false);
 
         }
     }
@@ -85,5 +119,15 @@ public class MenuScore : MonoBehaviour
     public void ReturnMenu()
     {
         SceneManager.LoadScene(_menuSceneName);
+    }
+
+    public void StartGame()
+    {
+        foreach (Transform child in _playerListParent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        _menuScore.SetActive(false);
+        FindObjectOfType<PlayerManager>().StartGame();
     }
 }

@@ -22,6 +22,8 @@ public class PlayerManager : MonoBehaviour
 
     private bool isEndMatch = false;
 
+    private bool gameStarted = false;
+
 
 	void Start()
 	{
@@ -35,7 +37,7 @@ public class PlayerManager : MonoBehaviour
 	{
 		var inputDevice = InputManager.ActiveDevice;
 
-		if (JoinButtonWasPressedOnDevice(inputDevice))
+		if (!gameStarted && JoinButtonWasPressedOnDevice(inputDevice))
 		{
 			if (ThereIsNoPlayerUsingDevice(inputDevice))
 			{
@@ -135,8 +137,7 @@ public class PlayerManager : MonoBehaviour
 		}
 	}
 
-
-	PlayerMovement CreatePlayer(InputDevice inputDevice)
+    PlayerMovement CreatePlayer(InputDevice inputDevice)
 	{
 		if (players.Count < maxPlayers)
 		{
@@ -180,5 +181,59 @@ public class PlayerManager : MonoBehaviour
         }
 
         isEndMatch = false;
+    }
+
+    public void CheatCreatePlayer()
+    {
+        if (players.Count < maxPlayers)
+        {
+            // Pop a position off the list. We'll add it back if the player is removed.
+            var playerPosition = playerPositions[players.Count];
+            //playerPositions.RemoveAt(0);
+
+            var gameObject = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+            var player = gameObject.GetComponent<PlayerMovement>();
+            player.Device = null;
+            player.playerID = players.Count;
+            players.Add(player);
+
+            _gameManager.AddPlayer();
+            Debug.Log("[Cheat] Add new player");
+        }
+    }
+
+    public void CheatKillPlayer()
+    {
+        if (players.Count > 1)
+        {
+            for (int i = players.Count - 1; i > 0; i--)
+            {
+                if (players[i].playerLifes > 0)
+                {
+                    players[i].playerLifes = 0;
+                    Debug.Log("[Cheat] Kill player");
+                    return;
+                }
+            }
+        }
+    }
+
+    public void CheatTurnPlayerIntoMonster()
+    {
+        if (players.Count > 1 && !players[0].isMonster)
+        {
+            players[0].TurnIntoMonster();
+            Debug.Log("[Cheat] Turn a player into the monster");
+        }
+    }
+
+    public void StartGame()
+    {
+        gameStarted = true;
+
+        foreach (var playerMovement in players)
+        {
+            playerMovement.CanMove(true);
+        }
     }
 }

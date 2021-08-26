@@ -49,23 +49,15 @@ public class GameManager : MonoBehaviour
         }
 
         menuScore.Init(_playerScores.Count, _winingScore, _playerScores);
-
-        //Count score
-        for (var index = 0; index < _playerScores.Count; index++)
-        {
-            var playerScore = _playerScores[index];
-            Debug.Log("Score[" + index + "] = " + playerScore);
-
-            if (playerScore == _winingScore)
-            {
-                Debug.Log("VICTORY");
-            }
-        }
     }
 
     public void AddPlayer()
     {
         _playerScores.Add(0);
+
+        var menuScore = FindObjectOfType<MenuScore>();
+
+        menuScore.PlayerConnection(_playerScores.Count);
     }
 
     public void NextMatch()

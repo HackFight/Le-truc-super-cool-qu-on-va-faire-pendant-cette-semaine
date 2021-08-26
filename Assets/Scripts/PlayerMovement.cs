@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
 	public bool canShock = true;
 	public bool canShoot = true;
 	public bool immortal = false;
+    private bool canMove = false;
 
 	private Vector3 initialPosition;
 
@@ -125,12 +126,17 @@ public class PlayerMovement : MonoBehaviour
 
 	void Update()
 	{
-		if (!isDead)
+        if (!isDead)
 		{
 			if (playerLifes <= 0)
 			{
 				Die();
 			}
+
+            if (Device == null)
+            {
+                return;
+            }
 
 			if (((Vector3)Device.Direction).magnitude > 0.5f)
 			{
@@ -258,21 +264,21 @@ public class PlayerMovement : MonoBehaviour
 
 				if (Device == null)
 				{
-					gameObject.SetActive(false);
+					//gameObject.SetActive(false);
 				}
 				else
 				{
-					gameObject.SetActive(true);
+					//gameObject.SetActive(true);
 
-					if (haveEggInHands == false && isDashing == false)
+					if (canMove && haveEggInHands == false && isDashing == false)
 					{
 						rg.MovePosition(rg.position + movement * moveSpeed);
 					}
-					else if (haveEggInHands == true && isDashing == false)
+					else if (canMove && haveEggInHands == true && isDashing == false)
 					{
 						rg.MovePosition(rg.position + movement * (moveSpeed - speedMalus));
 					}
-					else if (haveEggInHands == false && isDashing == true)
+					else if (canMove && haveEggInHands == false && isDashing == true)
 					{
 						rg.MovePosition(rg.position + (Vector3)(front.position - transform.position) * dashSpeed);
 					}
@@ -354,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	private void TurnIntoMonster()
+	public void TurnIntoMonster()
 	{
 		eggScript.canBeGrabed = false;
 		isMonster = true;
@@ -446,11 +452,14 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Die()
 	{
+        gameObject.SetActive(false);
 		isDead = true;
 	}
 
 	public void Reset()
 	{
+        gameObject.SetActive(true);
+
 		//Bools
 		haveEggInHands = false;
 		isLeftTriggerPressed = false;
@@ -474,7 +483,7 @@ public class PlayerMovement : MonoBehaviour
 
 		modelGolem.SetActive(false);
 
-if (playerID == 0)
+        if (playerID == 0)
         {
 			model0.SetActive(true);
             animator = model0.GetComponent<Animator>();
@@ -505,4 +514,9 @@ if (playerID == 0)
             model3.SetActive(true);
 		}
 	}
+
+    public void CanMove(bool canMove)
+    {
+        this.canMove = canMove;
+    }
 }
