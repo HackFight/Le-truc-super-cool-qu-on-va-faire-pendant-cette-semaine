@@ -38,7 +38,8 @@ public class SoundManager : MonoBehaviour
         playerMovement = FindObjectOfType<PlayerMovement>();
         dataBase = FindObjectOfType<DataBase>();
 
-        isMusicActive = dataBase.isMusicActive;
+        if (dataBase != null)
+            isMusicActive = dataBase.isMusicActive;
 
         if (isMusicActive)
         {
@@ -47,7 +48,8 @@ public class SoundManager : MonoBehaviour
     }
     void Update()
     {
-        isMusicActive = dataBase.isMusicActive;
+        if(dataBase != null)
+            isMusicActive = dataBase.isMusicActive;
 
         if (isMusicActive)
         {

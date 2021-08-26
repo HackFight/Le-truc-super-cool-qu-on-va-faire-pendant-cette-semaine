@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,7 @@ public class MenuScore : MonoBehaviour
     [SerializeField] private string _menuSceneName;
     [SerializeField] private GameObject _buttonMenu;
     [SerializeField] private GameObject _buttonStart;
+    [SerializeField] private TextMeshProUGUI _title;
 
     private int _nbPlayer;
     private int _nbTrophy;
@@ -24,6 +26,7 @@ public class MenuScore : MonoBehaviour
     void Start()
     {
         //_menuScore.SetActive(false);
+        _title.SetText("Waiting players...");
     }
 
     public void PlayerConnection(int nbPlayer)
@@ -47,7 +50,18 @@ public class MenuScore : MonoBehaviour
 
         _buttonMenu.SetActive(false);
         _buttonNextMatch.SetActive(false);
+
         _buttonStart.SetActive(true);
+        if (_nbPlayer < 2)
+        {
+            _buttonStart.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            _buttonStart.GetComponent<Button>().interactable = true;
+        }
+
+        _title.SetText("Waiting players...");
 
         EventSystem.current.SetSelectedGameObject(_buttonStart);
 
@@ -56,6 +70,8 @@ public class MenuScore : MonoBehaviour
     public void Init(int nbPlayer, int nbTrophy, List<int> scores)
     {
         _menuScore.SetActive(true);
+
+        _title.SetText("Score");
 
         _nbPlayer = nbPlayer;
         _nbTrophy = nbTrophy;

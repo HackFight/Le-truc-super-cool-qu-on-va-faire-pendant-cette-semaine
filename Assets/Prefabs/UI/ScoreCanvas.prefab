@@ -278,7 +278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 35a3e7b9e12cf5f4f83f604a38756412, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c3a34cfdc425cc5488d8ff4976428dc2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -317,9 +317,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 35a3e7b9e12cf5f4f83f604a38756412, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: eef92bf7097351c418f29c6cdae4ef98, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 9ed99bc934fc7bf4c95e4efacf81038b, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: c3a34cfdc425cc5488d8ff4976428dc2, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 3c42a28d1a5177548af347f7d4d6999e, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 0192ebc0741ca724cbe1b46d00ac0a8e, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b0f919e35e0dfc5498da4216ce0b6d69, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 426488dc73f11f243aa4d5d4a4835adc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -645,9 +645,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 83528f722b1f2ae4d889357ef678d7c0, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 5284b9e0311630a40a2a6431a6a071cd, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: b0f919e35e0dfc5498da4216ce0b6d69, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 426488dc73f11f243aa4d5d4a4835adc, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 47aef5ee38ca4e74191f5ab3614e5c1c, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: b601c49a917946948926981bb7f880af, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -792,3 +792,4 @@ MonoBehaviour:
   _menuSceneName: MenuPrincipal_Awi
   _buttonMenu: {fileID: 6969516610675325012}
   _buttonStart: {fileID: 3318177339892983783}
+  _title: {fileID: 2978492797606534172}
