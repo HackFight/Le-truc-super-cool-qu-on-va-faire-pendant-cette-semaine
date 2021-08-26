@@ -10,10 +10,10 @@ public class PlayerManager : MonoBehaviour
 
 	List<Vector3> playerPositions = new List<Vector3>() 
 	{
-			new Vector3( -1, 1, 1),
-			new Vector3( 1, 1, 1),
-			new Vector3( -1, 1, -1),
-			new Vector3( 1, 1, -1),
+			new Vector3( -10, 1, 10),
+			new Vector3( 10, 1, 10),
+			new Vector3( -10, 1, -10),
+			new Vector3( 10, 1, -10),
 	};
 
 	List<PlayerMovement> players = new List<PlayerMovement>(maxPlayers);
